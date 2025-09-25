@@ -1,7 +1,7 @@
 Simulador Interactivo de Autómatas Finitos Deterministas (AFD)
 ----------------------------
 Este proyecto es un simulador interactivo que permite la definición, visualización y evaluación de Autómatas Finitos Deterministas (AFD).
-Su objetivo es brindar una herramienta para crear autómatas, visualizar su representación gráfica y comprobar si cadenas de entrada son aceptadas o rechazadas.
+Su objetivo es brindar una herramienta para crear autómatas y comprobar si cadenas de entrada son aceptadas o rechazadas.
 ----------------------------
 Características
 
