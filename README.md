@@ -19,29 +19,10 @@ Requisitos
 
 Python 3.x
 
-Módulos de Python: Pillow, graphviz
-
-Graphviz (software externo para la visualización de grafos)
+Módulos de Python: Pillow
 
 Instalación y Configuración
 
-Instalar dependencias de Python
-pip install Pillow graphviz
-
-Instalar Graphviz
-----------------------------
-Windows:
-Descargar el instalador desde https://graphviz.org/download/
-
-Durante la instalación, seleccionar la opción para agregar Graphviz al PATH del sistema.
-----------------------------
-macOS (con Homebrew):
-brew install graphviz
-----------------------------
-Linux (Ubuntu/Debian):
-sudo apt-get install graphviz
-
-Nota: Después de la instalación es recomendable reiniciar la terminal para que los cambios en el PATH se apliquen correctamente.
 ----------------------------
 Estructura del Proyecto
 
