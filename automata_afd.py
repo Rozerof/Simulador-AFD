@@ -4,9 +4,10 @@ from collections import deque
 class AutomataAFD:
     """
     Clase que representa un Autómata Finito Determinista (AFD).
-    
+
     Esta clase es un modelo matemático que simula el comportamiento de un AFD.
-    Contiene todos sus componentes y los métodos necesarios para realizar simulaciones.
+    Contiene todos sus componentes (estados, alfabeto, transiciones, etc.) y los
+    métodos necesarios para definirlo, validarlo y realizar simulaciones.
     """
     def __init__(self):
         """
@@ -21,10 +22,22 @@ class AutomataAFD:
     def definir_automata(self, estados, alfabeto, transiciones, estado_inicial, estados_aceptacion):
         """
         Define los cinco componentes de un AFD y realiza validaciones iniciales.
+
+        Args:
+            estados (list[str]): Una lista de cadenas que representan los estados.
+            alfabeto (list[str]): Una lista de cadenas que representan los símbolos del alfabeto.
+            transiciones (list[tuple]): Una lista de tuplas, donde cada tupla representa
+                                        una transición en el formato (origen, simbolo, destino).
+            estado_inicial (str): La cadena que representa el estado inicial.
+            estados_aceptacion (list[str]): Una lista de cadenas que representan los estados de aceptación.
+
+        Raises:
+            TypeError: Si los componentes no son del tipo esperado (cadenas de texto).
+            ValueError: Si hay inconsistencias lógicas (ej. estado inicial no en estados,
+                        símbolo '*' en el alfabeto, etc.).
         """
         if not all(isinstance(e, str) for e in estados):
             raise TypeError("Los estados deben ser cadenas de texto.")
-        # ... (otras validaciones de tipos y conjuntos son las mismas) ...
         if not all(isinstance(s, str) for s in alfabeto):
             raise TypeError("Los símbolos del alfabeto deben ser cadenas de texto.")
         if not isinstance(estado_inicial, str):
@@ -49,10 +62,23 @@ class AutomataAFD:
     def _crear_tabla_transiciones(self, lista_transiciones):
         """
         Método auxiliar para construir la tabla de transiciones a partir de una lista.
+
+        Este método convierte una lista de tuplas de transición en un diccionario anidado
+        para un acceso eficiente, validando cada transición en el proceso.
+
+        Args:
+            lista_transiciones (list[tuple]): Lista de tuplas (origen, simbolo, destino).
+
+        Returns:
+            dict: Un diccionario que representa la tabla de transiciones.
+                  Formato: {estado_origen: {simbolo: estado_destino}}.
+
+        Raises:
+            ValueError: Si un estado o símbolo en una transición no existe, o si se define
+                        una transición duplicada para un mismo estado y símbolo.
         """
         tabla = {}
         for origen, simbolo, destino in lista_transiciones:
-            # ... (validaciones de existencia de estados y símbolos son las mismas) ...
             if origen not in self.estados:
                 raise ValueError(f"Estado de origen '{origen}' no definido.")
             if simbolo not in self.alfabeto:
@@ -70,8 +96,18 @@ class AutomataAFD:
     def evaluar_cadena(self, cadena):
         """
         Procesa una cadena de entrada y determina si es aceptada por el AFD.
+
+        Simula el recorrido del autómata estado por estado para la cadena dada.
+
+        Args:
+            cadena (str): La cadena de símbolos a evaluar. Se usa '*' para la cadena vacía.
+
+        Returns:
+            tuple: Una tupla con tres elementos:
+                   - str: "ACEPTADA" o "RECHAZADA".
+                   - list: El historial del recorrido, una lista de tuplas (estado, simbolo).
+                   - str: Un mensaje descriptivo del resultado o del error encontrado.
         """
-        # ... (lógica de evaluación es la misma) ...
         if cadena == '*':
             if self.estado_inicial in self.estados_aceptacion:
                 return "ACEPTADA", [(self.estado_inicial, None)], "La cadena vacía es aceptada porque el estado inicial es de aceptación."
@@ -100,8 +136,15 @@ class AutomataAFD:
         """
         Genera las primeras 'num_cadenas' que pertenecen al lenguaje,
         utilizando un algoritmo de búsqueda en anchura (BFS) para encontrar las más cortas.
+
+        Args:
+            num_cadenas (int, optional): El número máximo de cadenas a generar.
+                                         Por defecto es 10.
+
+        Returns:
+            list[str]: Una lista de cadenas aceptadas por el autómata, ordenadas por
+                       longitud (de menor a mayor). Incluye '*' si la cadena vacía es válida.
         """
-        # ... (lógica de generación es la misma) ...
         if not self.estado_inicial:
             return []
 
@@ -131,6 +174,13 @@ class AutomataAFD:
     def guardar_a_json(self, nombre_archivo):
         """
         Guarda la definición del autómata en un archivo JSON.
+
+        Args:
+            nombre_archivo (str): La ruta completa del archivo donde se guardará el autómata.
+
+        Returns:
+            tuple: Una tupla (bool, str) donde el primer elemento indica si la operación
+                   fue exitosa y el segundo es un mensaje de estado.
         """
         data = {
             "estados": list(self.estados),
@@ -149,8 +199,17 @@ class AutomataAFD:
     def cargar_de_json(self, nombre_archivo):
         """
         Carga la definición de un autómata desde un archivo JSON.
-        
-        Retorna: Una tupla con (True/False, diccionario_de_datos/mensaje_de_error).
+
+        Actualiza el estado interno del objeto con los datos del archivo.
+
+        Args:
+            nombre_archivo (str): La ruta del archivo JSON a cargar.
+
+        Returns:
+            tuple: Una tupla (bool, result) donde:
+                   - bool: True si la carga fue exitosa, False en caso contrario.
+                   - result: El diccionario con los datos cargados si fue exitoso, o un
+                             mensaje de error (str) si falló.
         """
         try:
             with open(nombre_archivo, 'r') as f:

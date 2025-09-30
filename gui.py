@@ -7,12 +7,17 @@ class AutomataGUI:
     """
     Clase principal responsable de la Interfaz Gráfica de Usuario (GUI) del simulador de AFD.
 
-    Esta clase es la "Vista" y el "Controlador" de la interfaz, gestionando la 
-    creación de todos los widgets y delegando la lógica de procesamiento a la instancia de AutomataLogic.
+    Esta clase construye la ventana principal y todos sus componentes (widgets),
+    y maneja los eventos del usuario (clics de botón, entrada de texto). Actúa como
+    la "Vista" y el "Controlador" en un patrón MVC simple, delegando toda la lógica
+    de negocio a una instancia de `AutomataLogic`.
     """
     def __init__(self, master):
         """
         Inicializa la ventana principal de la aplicación y sus componentes.
+
+        Args:
+            master (tk.Tk): La ventana raíz de la aplicación Tkinter.
         """
         self.master = master
         master.title("Simulador Interactivo de AFD")
@@ -51,6 +56,9 @@ class AutomataGUI:
     def on_frame_configure(self, event):
         """
         Ajusta la región de desplazamiento del canvas cuando el frame interior cambia de tamaño.
+
+        Este método se asegura de que la barra de desplazamiento cubra todo el contenido
+        del frame, incluso si se añaden o redimensionan widgets dinámicamente.
         """
         self.input_canvas.configure(scrollregion=self.input_canvas.bbox("all"))
         self.input_canvas.itemconfig(self.input_canvas.create_window(0, 0, window=self.input_frame, anchor="nw"), width=self.input_canvas.winfo_width())
@@ -59,6 +67,9 @@ class AutomataGUI:
     def create_input_widgets(self):
         """
         Crea y posiciona todos los widgets (entradas, etiquetas, botones) de la interfaz.
+
+        Organiza la interfaz en secciones lógicas utilizando `LabelFrame` para una
+        mejor experiencia de usuario.
         """
         # --- Sección de Definición de Autómata ---
         input_section = ttk.LabelFrame(self.input_frame, text="Definir Autómata", padding="10")
@@ -128,7 +139,7 @@ class AutomataGUI:
     def define_automata_from_gui(self):
         """
         Recopila los datos de la GUI y llama a la lógica para definir y validar el autómata.
-        Actualiza el mensaje de salida según el éxito o el error de la operación.
+        Muestra un mensaje de éxito o error en la `output_label`.
         """
         try:
             # Recopilación de datos y pre-procesamiento (separación por comas, eliminación de espacios)
@@ -150,7 +161,10 @@ class AutomataGUI:
     def evaluate_chain(self):
         """
         Recopila la cadena de la GUI, llama a la lógica para su evaluación y formatea el resultado.
-        Muestra el recorrido paso a paso y el resultado final.
+
+        Actualiza el cuadro de texto `evaluation_text` con el recorrido paso a paso de la
+        evaluación y la `output_label` con el resultado final (aceptada o rechazada)
+        y un mensaje descriptivo.
         """
         chain = self.chain_entry.get().strip()
         result, recorrido, message = self.automata_logic.evaluar_cadena(chain)
@@ -195,6 +209,8 @@ class AutomataGUI:
     def generate_chains(self):
         """
         Llama al método de la lógica para generar cadenas válidas y muestra el resultado en la etiqueta de salida.
+
+        El resultado es una lista de cadenas que son aceptadas por el autómata definido.
         """
         message = self.automata_logic.generar_cadenas()
         if "Define un autómata" in message:
@@ -206,6 +222,9 @@ class AutomataGUI:
     def save_automata(self):
         """
         Abre el diálogo de guardar archivo y delega la operación de guardado a la lógica.
+
+        El usuario selecciona una ubicación y un nombre de archivo. El autómata actual
+        se guarda en formato JSON.
         """
         file_path = filedialog.asksaveasfilename(defaultextension=".json", filetypes=[("JSON files", "*.json")])
         if file_path:
@@ -215,8 +234,11 @@ class AutomataGUI:
     
     def load_automata(self):
         """
-        Abre el diálogo de abrir archivo, llama a la lógica para cargar, y si es exitoso, 
-        ACTUALIZA todos los campos de texto de la GUI con los datos cargados.
+        Abre el diálogo para abrir un archivo, delega la carga a la capa lógica y,
+        si la operación es exitosa, actualiza todos los campos de entrada de la GUI
+        con los datos del autómata cargado desde el archivo JSON.
+
+        Muestra un mensaje de éxito o error según el resultado.
         """
         file_path = filedialog.askopenfilename(filetypes=[("JSON files", "*.json")])
         if file_path:
@@ -258,7 +280,10 @@ class AutomataGUI:
     
     def load_example_automata(self):
         """
-        Carga un autómata predefinido en los campos de entrada de la GUI para facilitar las pruebas.
+        Carga un autómata de ejemplo predefinido en los campos de la GUI.
+
+        Este método se llama al iniciar la aplicación para que el usuario tenga un
+        ejemplo funcional con el que interactuar inmediatamente.
         """
         self.states_entry.insert(0, "q0, q1, q2")
         self.alphabet_entry.insert(0, "a, b")
